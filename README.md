@@ -14,13 +14,13 @@ Requirements
 - Python 3.8+
 - requests
   - Install with: `pip install requests`
+- tqdm
+  - Install with: `pip install tqdm`
 
 Quick install
-1. Save `nasa_downloader.py` somewhere.
-2. (Optional) Create a virtualenv:
-   - python -m venv venv
-   - source venv/bin/activate
-   - pip install requests
+#1 download project ZIP 
+#2 install reqirements.txt
+   - pip install reqirements.txt
 
 Basic usage (interactive)
 - Run: `python nasa_downloader.py` and follow prompts.
