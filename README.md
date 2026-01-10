@@ -1,80 +1,34 @@
-# NASA Image Downloader
+# NASA Image Download Tool
 
-A full-featured NASA Images API downloader script.
+A small, safe, cross-platform tool to search the NASA Images API and download image assets and metadata.
 
 Features
-- Search NASA Images API and download images and/or metadata.
-- Concurrent downloads with retries/backoff.
-- Hashing (SHA-256) based deduplication using a small SQLite database.
-- Save metadata as TXT and/or JSON.
-- Rotating logs with stack traces for errors.
-- CLI with interactive defaults for easy use.
+
+* Search the NASA Images API (https://images-api.nasa.gov).
+* Download image assets with selectable quality (small, medium, large, orig, or all).
+* Save metadata as both JSON and readable TXT.
+* Safe directory creation with fallbacks for non-writable locations.
+* Retries and progress bars for downloads.
+* CLI with optional interactive prompts.
+
+Usage (interactive)
+
+* python nasa\_downloader.py
+
+  * Follow prompts for query, output folder, what to download, quality, and limits.
+
+Usage (CLI)
+
+* python nasa\_downloader.py --query "mars" --output ./nasabackup --qualities orig --limit 25
 
 Requirements
-- Python 3.8+
-- requests
-  - Install with: `pip install requests`
-- tqdm
-  - Install with: `pip install tqdm`
 
-Quick install
-#1 download project ZIP 
-#2 install reqirements.txt
-   - pip install reqirements.txt
+* open cmd in same path as /requirements.txt
+* pip -r install requirements.txt
 
-Basic usage (interactive)
-- Run: `python nasa_downloader.py` and follow prompts.
 
-Non-interactive example
-```
-python nasa_downloader.py \
-  --query moon \
-  --save-dir ./nasabackup \
-  --qualities all \
-  --download both \
-  --max 200 \
-  --rate 0.5 \
-  --workers 6 \
-  --dedupe \
-  --metadata-format both
-```
 
-Key options
-- --query / -q : search term (interactive default "space").
-- --save-dir / -s : output directory (default ./nasabackup).
-- --download / -d : "images", "metadata", or "both" (default both).
-- --qualities : comma-separated from small,medium,large,orig or "all".
-- --rate : seconds delay between search results (default 1.0).
-- --max : maximum number of images to process.
-- --workers : number of concurrent image download workers (default 4).
-- --dedupe : enable deduplication by image hash (recommended).
-- --db : custom SQLite DB path for dedupe (default: `<save_dir>/nasa_downloader.db`).
-- --metadata-format : `txt`, `json`, or `both`.
-- --skip-existing-by-name : skip saving if a file with same name exists and identical.
-- --retries / --backoff / --timeout : HTTP retry/backoff/timeouts.
-- --user-agent : custom User-Agent string.
-- --log-level : console log level (DEBUG/INFO/etc).
+Notes
 
-Logs
-- A rotating log file is created under `<save_dir>/logs/nasa_downloader.log`.
-
-Behavior notes
-- Metadata is saved once per item into `<save_dir>/Metadata` as TXT and/or JSON depending on settings.
-- Images are saved in per-quality folders (`Low/Images`, `Medium/Images`, `High/Images`, `Original/Images`).
-- The script uses the NASA "asset" endpoint to discover available image URLs; if asset lookup fails it falls back to common URL patterns.
-- Downloads are atomic: the file is first downloaded to a temp file, hashed, checked for duplicates, then moved to final location.
-- Duplicate images (by hash) are not stored twice when `--dedupe` is used; their URLs are still recorded in the DB.
-
-Extending
-- To add image hashing algorithm, pass `--hash-algo` (default `sha256`).
-- To change DB location, pass `--db`.
-- To disable file logging, comment out `configure_file_logging` call in the script (or adjust as needed).
-
-Support / Next steps
-- I can add optional concurrency throttling per-host, S3 upload support, image format conversion, or a small UI. Tell me which you'd like next.
-
-License
-- Use this script at your own risk. The NASA Images API is public; be courteous (respect rate limits and server load).
-- No warranty.
-
-Enjoy!
+* The tool uses the public NASA Images API and does not require an API key.
+* Downloading "all" qualities will require more storage and time.
