@@ -13,7 +13,7 @@ Features
 
 Usage (interactive)
 
-* python nasa\_downloader.py
+* NASA-DownloadTool\NASA_DownloadToolV13.py
 
   * Follow prompts for query, output folder, what to download, quality, and limits.
 
@@ -23,6 +23,7 @@ Usage (CLI)
 
 Requirements
 
+* Make sure you have the latest Python installed https://www.python.org/
 * open cmd in same path as /requirements.txt
 * pip -r install requirements.txt
 
