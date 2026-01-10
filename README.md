@@ -13,7 +13,7 @@ Features
 
 Usage (interactive)
 
-* NASA-DownloadTool\NASA_DownloadToolV13.py
+* \NASA-DownloadTool\NASA_DownloadToolV13.py
 
   * Follow prompts for query, output folder, what to download, quality, and limits.
 
