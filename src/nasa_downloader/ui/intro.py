@@ -22,9 +22,9 @@ class SpaceIntro:
     """Procedurally generated space scene with galaxy, nebula, and UFO."""
 
     def __init__(self):
-        self.palette_stars = [" ", ".", "·", ":", "*", "⋆", "✦", "✶"]
+        self.palette_stars = [" ", ".", "·", ":", "*", "⋆", "✦",]
         self.palette_nebula = [" ", ".", ":", "~", "≈", "▒", "▓", "█"]
-        self.palette_galaxy = [" ", ".", "·", ":", "*", "+", "○", "●", "◉", "⦿"]
+        self.palette_galaxy = [" ", ".", "·", ":", "*", "+", "○", "●"]
 
     @staticmethod
     def lerp(a: float, b: float, t: float) -> float:
