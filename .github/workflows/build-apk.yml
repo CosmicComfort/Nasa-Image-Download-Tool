@@ -1,0 +1,118 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'android/**'
+      - 'src/**'
+      - '.github/workflows/build-apk.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'android/**'
+      - 'src/**'
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Enable debug build'
+        required: false
+        default: 'true'
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          git \
+          ffmpeg \
+          libsdl2-dev \
+          libsdl2-image-dev \
+          libsdl2-mixer-dev \
+          libsdl2-ttf-dev \
+          libportmidi-dev \
+          libswscale-dev \
+          libavformat-dev \
+          libavcodec-dev \
+          zlib1g-dev \
+          libgstreamer1.0-dev \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          openjdk-17-jdk \
+          unzip \
+          zip \
+          autoconf \
+          libtool \
+          pkg-config \
+          libncurses5-dev \
+          libncursesw5-dev \
+          libtinfo5 \
+          cmake \
+          libffi-dev \
+          libssl-dev
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install buildozer cython virtualenv
+
+    - name: Set up Android SDK
+      run: |
+        mkdir -p ~/.buildozer/android/platform
+        echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
+
+    - name: Cache Buildozer
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.buildozer
+          android/.buildozer
+        key: ${{ runner.os }}-buildozer-${{ hashFiles('android/buildozer.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-buildozer-
+
+    - name: Copy source to android directory
+      run: |
+        cp -r src android/
+        ls -la android/
+
+    - name: Build APK
+      run: |
+        cd android
+        buildozer -v android debug
+      env:
+        ANDROIDSDK: $HOME/.buildozer/android/platform/android-sdk
+        ANDROIDNDK: $HOME/.buildozer/android/platform/android-ndk
+        ANDROIDAPI: "33"
+        NDKAPI: "21"
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nasa-media-downloader-apk
+        path: android/bin/*.apk
+        retention-days: 30
+
+    - name: Upload build logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: buildozer-logs
+        path: |
+          android/.buildozer/logs/
+          android/.buildozer/android/platform/build-*/build/other_builds/*/
+        retention-days: 7

@@ -1,2 +1,6 @@
-requests>=2.28
-tqdm>=4.64
+# NASA Media Downloader - Core Dependencies
+
+requests>=2.28.0
+urllib3>=1.26.0
+tqdm>=4.65.0
+click>=8.1.0

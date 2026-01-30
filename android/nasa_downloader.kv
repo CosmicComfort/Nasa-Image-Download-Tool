@@ -1,0 +1,317 @@
+#:kivy 2.0
+
+# NASA Media Downloader - Kivy UI Layout
+
+<SearchScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+
+        # Header
+        BoxLayout:
+            size_hint_y: None
+            height: 60
+
+            Label:
+                text: 'NASA Media Downloader'
+                font_size: '24sp'
+                bold: True
+                color: 0.2, 0.6, 1, 1
+
+            Button:
+                text: 'Settings'
+                size_hint_x: None
+                width: 100
+                on_release: app.go_settings()
+
+        # Search Input
+        BoxLayout:
+            size_hint_y: None
+            height: 50
+            spacing: 10
+
+            TextInput:
+                id: search_input
+                hint_text: 'Enter search query (e.g., "mars rover", "nebula")'
+                multiline: False
+                font_size: '16sp'
+                on_text_validate: app.search(self.text)
+
+            Button:
+                text: 'Search'
+                size_hint_x: None
+                width: 100
+                disabled: root.is_searching
+                on_release: app.search(search_input.text)
+
+        # Media Type Selection
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+
+            Label:
+                text: 'Media Type:'
+                size_hint_x: None
+                width: 100
+
+            ToggleButton:
+                id: btn_images
+                text: 'Images'
+                group: 'media_type'
+                state: 'down'
+
+            ToggleButton:
+                id: btn_videos
+                text: 'Videos'
+                group: 'media_type'
+
+        # Status
+        Label:
+            text: root.status_text
+            font_size: '14sp'
+            color: 0.7, 0.7, 0.7, 1
+
+        # Spacer
+        Widget:
+
+<ResultsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        # Header
+        BoxLayout:
+            size_hint_y: None
+            height: 50
+
+            Button:
+                text: '< Back'
+                size_hint_x: None
+                width: 80
+                on_release: app.go_home()
+
+            Label:
+                text: 'Search Results'
+                font_size: '20sp'
+                bold: True
+
+        # Results List
+        ScrollView:
+            RecycleView:
+                id: results_list
+                viewclass: 'ResultItem'
+                data: root.results
+
+                RecycleBoxLayout:
+                    default_size: None, 100
+                    default_size_hint: 1, None
+                    size_hint_y: None
+                    height: self.minimum_height
+                    orientation: 'vertical'
+                    spacing: 5
+
+<ResultItem@BoxLayout>:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 5
+    canvas.before:
+        Color:
+            rgba: 0.15, 0.15, 0.2, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    nasa_id: ''
+    title: ''
+    description: ''
+    media_type: ''
+
+    Label:
+        text: root.title
+        font_size: '16sp'
+        bold: True
+        text_size: self.size
+        halign: 'left'
+        valign: 'top'
+        shorten: True
+
+    Label:
+        text: root.description
+        font_size: '12sp'
+        color: 0.7, 0.7, 0.7, 1
+        text_size: self.size
+        halign: 'left'
+        valign: 'top'
+
+    BoxLayout:
+        size_hint_y: None
+        height: 35
+
+        Label:
+            text: f'[{root.media_type.upper()}]'
+            font_size: '12sp'
+            color: 0.2, 0.6, 1, 1 if root.media_type == 'image' else (1, 0.4, 0.7, 1)
+            size_hint_x: None
+            width: 80
+
+        Widget:
+
+        Button:
+            text: 'Download'
+            size_hint_x: None
+            width: 100
+            on_release: app.download_item(root.nasa_id)
+
+<DownloadScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 20
+
+        Label:
+            text: 'Downloading...'
+            font_size: '24sp'
+            bold: True
+            size_hint_y: None
+            height: 40
+
+        Label:
+            text: root.download_status
+            font_size: '16sp'
+
+        Label:
+            text: root.current_file
+            font_size: '14sp'
+            color: 0.7, 0.7, 0.7, 1
+
+        ProgressBar:
+            value: root.progress
+            max: 100
+            size_hint_y: None
+            height: 30
+
+        Label:
+            text: f'{root.completed_files} / {root.total_files} files'
+            font_size: '14sp'
+
+        Widget:
+
+        Button:
+            text: 'Back to Home'
+            size_hint_y: None
+            height: 50
+            disabled: app.is_downloading
+            on_release: app.go_home()
+
+<SettingsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+
+        # Header
+        BoxLayout:
+            size_hint_y: None
+            height: 50
+
+            Button:
+                text: '< Back'
+                size_hint_x: None
+                width: 80
+                on_release: app.go_home()
+
+            Label:
+                text: 'Settings'
+                font_size: '20sp'
+                bold: True
+
+        # Download Options
+        Label:
+            text: 'Download Options'
+            font_size: '18sp'
+            bold: True
+            size_hint_y: None
+            height: 30
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+
+            CheckBox:
+                id: chk_images
+                active: root.download_images
+                on_active: root.download_images = self.active
+            Label:
+                text: 'Download Images'
+                halign: 'left'
+                text_size: self.size
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+
+            CheckBox:
+                id: chk_videos
+                active: root.download_videos
+                on_active: root.download_videos = self.active
+            Label:
+                text: 'Download Videos'
+                halign: 'left'
+                text_size: self.size
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+
+            CheckBox:
+                id: chk_metadata
+                active: root.download_metadata
+                on_active: root.download_metadata = self.active
+            Label:
+                text: 'Save Metadata (JSON + TXT)'
+                halign: 'left'
+                text_size: self.size
+
+        # Quality Selection
+        Label:
+            text: 'Quality'
+            font_size: '18sp'
+            bold: True
+            size_hint_y: None
+            height: 30
+
+        Spinner:
+            id: quality_spinner
+            text: root.selected_quality
+            values: ['small', 'medium', 'large', 'orig']
+            size_hint_y: None
+            height: 45
+            on_text: root.selected_quality = self.text
+
+        # Max Items
+        Label:
+            text: 'Maximum Items per Search'
+            font_size: '18sp'
+            bold: True
+            size_hint_y: None
+            height: 30
+
+        Slider:
+            id: max_items_slider
+            min: 10
+            max: 200
+            step: 10
+            value: root.max_items
+            on_value: root.max_items = int(self.value)
+            size_hint_y: None
+            height: 40
+
+        Label:
+            text: str(int(max_items_slider.value)) + ' items'
+            size_hint_y: None
+            height: 25
+
+        Widget:
