@@ -46,22 +46,22 @@ class Theme:
     @classmethod
     def success(cls, text: str) -> str:
         """Format success message."""
-        return f"{cls.GREEN}✓{cls.RESET} {text}"
+        return f"{cls.GREEN}[OK]{cls.RESET} {text}"
 
     @classmethod
     def error(cls, text: str) -> str:
         """Format error message."""
-        return f"{cls.RED}✗{cls.RESET} {text}"
+        return f"{cls.RED}[ERR]{cls.RESET} {text}"
 
     @classmethod
     def warning(cls, text: str) -> str:
         """Format warning message."""
-        return f"{cls.YELLOW}⚠{cls.RESET} {text}"
+        return f"{cls.YELLOW}[WARN]{cls.RESET} {text}"
 
     @classmethod
     def info(cls, text: str) -> str:
         """Format info message."""
-        return f"{cls.CYAN}ℹ{cls.RESET} {text}"
+        return f"{cls.CYAN}[INFO]{cls.RESET} {text}"
 
     @classmethod
     def header(cls, text: str, width: int = 60) -> str:
@@ -78,12 +78,12 @@ class Theme:
     @classmethod
     def queued_image(cls, title: str) -> str:
         """Format queued image message."""
-        return f"{cls.GREEN}✓{cls.RESET} Queued: {title}"
+        return f"{cls.GREEN}[+]{cls.RESET} Queued: {title}"
 
     @classmethod
     def queued_video(cls, title: str) -> str:
         """Format queued video message."""
-        return f"{cls.MAGENTA}▶{cls.RESET} Queued: {title}"
+        return f"{cls.MAGENTA}[>]{cls.RESET} Queued: {title}"
 
     @classmethod
     def mission_complete(cls) -> str:

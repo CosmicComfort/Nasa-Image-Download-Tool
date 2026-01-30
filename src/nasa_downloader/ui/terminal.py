@@ -81,12 +81,20 @@ def safe_print(text: str = "", end: str = "\n") -> None:
     """
     Safely print text to stdout with proper flushing.
 
+    Handles Unicode encoding errors gracefully on Windows.
+
     Args:
         text: Text to print
         end: Line ending (default: newline)
     """
-    sys.stdout.write(text + end)
-    sys.stdout.flush()
+    try:
+        sys.stdout.write(text + end)
+        sys.stdout.flush()
+    except UnicodeEncodeError:
+        # Fallback for Windows consoles that don't support Unicode
+        encoded = text.encode(sys.stdout.encoding or 'utf-8', errors='replace')
+        sys.stdout.write(encoded.decode(sys.stdout.encoding or 'utf-8') + end)
+        sys.stdout.flush()
 
 
 def center_text(text: str, width: int = None) -> str:
